@@ -1,35 +1,37 @@
+const MODEL = 'gpt-4o-mini';
+
 export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
+
   const { text } = req.body;
 
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-5-5',
-      max_tokens: 1500,
-      system: 'You clean up raw speech-to-text from a classroom lesson. Add punctuation and capitalization, split into short paragraphs, and fix obvious misheard words using context. Do not add, remove, or summarize content. Return only the cleaned text.',
-      messages: [{ role: 'user', content: text }],
-    }),
-  });
+  try {
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_completion_tokens: 1500,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You clean up raw speech-to-text from a classroom lesson. Add punctuation and capitalization, split into short paragraphs, and fix obvious misheard words using context. Do not add, remove, or summarize content. Return only the cleaned text.',
+          },
+          { role: 'user', content: text },
+        ],
+      }),
+    });
 
-  const data = await r.json();
-  res.status(200).json({ clean: data.content[0].text });
-}
+    const data = await r.json();
+    if (!r.ok) console.log('OpenAI error:', data.error);
+    if (!r.ok) return res.status(500).json({ error: data.error?.message || 'API error' });
 
-let cleanText = '';
-
-async function cleanTranscript() {
-  const raw = lines.map(l => l.text).join(' ');
-  const res = await fetch('/api/clean', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ text: raw }),
-  });
-  const data = await res.json();
-  cleanText = data.clean;
-  document.getElementById('live').innerText = cleanText;
+    res.status(200).json({ clean: data.choices[0].message.content });
+  } catch (err) {
+    res.status(500).json({ error: 'Something went wrong' });
+  }
 }
