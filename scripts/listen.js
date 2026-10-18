@@ -25,7 +25,6 @@ rec.onresult = (e) => {
   }
 
   render(interim);
-  updateFile(interim);
 };
 
 rec.onend = () => {
@@ -107,38 +106,69 @@ async function cleanNewLines() {
 
 setInterval(cleanNewLines, 15000);
 
-let fileHandle = null;
-let writing = false;
-let latestText = '';
+async function triggerScan() {
+    const transcriptText = document.getElementById('live').innerText;
+    const sidebarDiv = document.getElementById('sidebar-questions');
 
-document.getElementById('chooseButton').onclick = async () => {
-  fileHandle = await window.showSaveFilePicker({
-    suggestedName: 'note.txt',
-    types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }],
-  });
-};
+    if (!transcriptText || transcriptText.trim() === "") {
+        alert("No transcript text found to scan yet!");
+        return;
+    }
 
-async function writeFile() {
-  if (writing || !fileHandle) return;
-  writing = true;
-  try {
-    let written;
-    do {
-      written = latestText;
-      const w = await fileHandle.createWritable();
-      await w.write(written);
-      await w.close();
-    } while (written !== latestText);
-  } catch (err) {
-    console.log('File write error:', err);
-  }
-  writing = false;
-}
+    try {
+        const response = await fetch('/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: transcriptText })
+        });
 
-function updateFile(interim = '') {
-  const done = lines
-    .map(l => `[${new Date(l.time).toLocaleTimeString()}] ${l.text}`)
-    .join('\n');
-  latestText = interim ? done + '\n[live] ' + interim : done;
-  writeFile();
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+            if (sidebarDiv.querySelector('.placeholder-text')) {
+                sidebarDiv.innerHTML = '';
+            }
+
+            data.results.forEach(item => {
+              const safeId = "q-" + btoa(item.question).replace(/=/g, '').substring(0, 15);
+              if (!document.getElementById(safeId)) {
+                  const card = document.createElement('div');
+                  card.id = safeId;
+                  card.className = 'question-card';
+                  
+                  card.innerHTML = `
+                      <div class="card-header">
+                          <p class="question-title"><strong>${item.question}</strong></p>
+                          <button class="delete-btn" title="Remove question">&times;</button>
+                      </div>
+                      <div class="answer-box" style="display: none;">
+                          <p><strong>Answer:</strong></p>
+                          <div>${item.answer.replace(/\n/g, '<br>')}</div>
+                      </div>
+                  `;
+
+                  card.onclick = () => {
+                      const answerBox = card.querySelector('.answer-box');
+                      if (answerBox.style.display === 'none') {
+                          answerBox.style.display = 'block';
+                          card.classList.add('active');
+                      } else {
+                          answerBox.style.display = 'none';
+                          card.classList.remove('active');
+                      }
+                  };
+
+                  const deleteBtn = card.querySelector('.delete-btn');
+                  deleteBtn.onclick = (e) => {
+                      e.stopPropagation();
+                      card.remove();
+                  };
+
+                  sidebarDiv.prepend(card);
+              }
+          });
+        }
+    } catch (err) {
+        console.error("Error communicating with AI backend:", err);
+    }
 }

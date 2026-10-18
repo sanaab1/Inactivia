@@ -1,0 +1,151 @@
+h2 {
+    font-family: "Google Sans", sans-serif;
+    text-align: center;
+}
+
+html {
+    font-family: "Google Sans", sans-serif;
+    background-color: rgb(250, 250, 250);
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    height: 90vh;
+}
+
+.main-content {
+    flex: 2;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+#transcriptDisplay, #live {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-y: auto;
+    background: #fafafa;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.sidebar {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+
+.question-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.question-card:hover {
+    background: #f1f8ff;
+    border-color: #b8caf0;
+}
+
+.question-title {
+    margin: 0;
+    color: #24292e;
+    font-size: 0.95rem;
+}
+
+.answer-box {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #586069;
+    font-size: 0.9rem;
+}
+
+.placeholder-text {
+    color: #888;
+    font-style: italic;
+}
+
+button {
+    font-family: "Google Sans", sans-serif;
+    padding: 8px 16px;
+    margin-right: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.buttons button {
+    flex: 1;
+    text-align: center;
+}
+
+#scanForQuestionsButton:hover {
+    transition: all 0.2s ease;
+    background: #e0f7e0;
+    border-color: #a0d4a0;
+}
+
+#listenButton:hover {
+    transition: all 0.2s ease;
+    background: #d0eaff;
+    border-color: #a0c4ff;
+}
+
+#stopButton:hover {
+    transition: all 0.2s ease;
+    background: #ffd0d0;
+    border-color: #ffa0a0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-top: -2px;
+}
+
+.delete-btn:hover {
+    transition: all 0.2s ease;
+    color: #e74c3c;
+    background: none;
+    border: none;
+}

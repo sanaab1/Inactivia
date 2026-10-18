@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inactivia</title>
+    <link rel="icon" type="image/png" href="../assets/Inactivia-logo.png">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <div class="main-content">
+            <h2>Live Transcript</h2>
+            <div class="buttons">
+              <button id="listenButton">Start Listening</button>
+              <button id="stopButton">Stop</button>
+            </div>
+            <div id="live" contenteditable="true"></div>
+            <button id="scanForQuestionsButton" onclick="triggerScan()">Scan for Questions Now</button>
+        </div>
+
+        <div class="sidebar">
+            <h2>Questions</h2>
+            <div id="sidebar-questions">
+                <p class="placeholder-text">Waiting for questions...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/listen.js"></script>
+</body>
+</html>
